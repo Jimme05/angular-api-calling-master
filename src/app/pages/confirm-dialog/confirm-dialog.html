@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>{{ data.title || 'ยืนยันการทำรายการ' }}</h2>
+<div mat-dialog-content>
+  <p>{{ data.message || 'ต้องการดำเนินการต่อหรือไม่?' }}</p>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close(false)">{{ data.cancelText || 'ยกเลิก' }}</button>
+  <button mat-raised-button color="warn" (click)="dialogRef.close(true)">
+    {{ data.confirmText || 'ยืนยัน' }}
+  </button>
+</div>

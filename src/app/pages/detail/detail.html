@@ -1,0 +1,45 @@
+<div class="details-page">
+  <div class="topbar">
+    <a mat-button routerLink="/">← กลับหน้าค้นหา</a>
+  </div>
+
+  <ng-container *ngIf="!loading(); else loadingTpl">
+    <ng-container *ngIf="trip() as t; else notFoundTpl">
+      <div class="card">
+        <div class="image">
+          <img *ngIf="t.coverimage" [src]="t.coverimage" [alt]="t.name" />
+          <div *ngIf="!t.coverimage" class="no-img">No Image</div>
+        </div>
+
+        <div class="content">
+          <h1 class="title">{{ t.name }}</h1>
+
+          <div class="meta">
+            <div class="chip"><b>ID:</b> {{ t.idx }}</div>
+            <div class="chip"><b>ประเทศ:</b> {{ t.country }}</div>
+            <div class="chip"><b>ทวีป/โซน:</b> {{ t.destination_zone }}</div>
+            <div class="chip"><b>ระยะเวลา:</b> {{ t.duration }} วัน</div>
+            <div class="chip price"><b>ราคา:</b> {{ t.price | number:'1.0-0' }}</div>
+          </div>
+
+          <div class="desc">
+            {{ t.detail }}
+          </div>
+
+          <div class="actions">
+            <a mat-raised-button color="primary" routerLink="/">จอง/ดูแพ็กเกจอื่น ๆ</a>
+            <a mat-stroked-button routerLink="/">ย้อนกลับ</a>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #loadingTpl>
+    <div class="state">กำลังโหลดข้อมูล...</div>
+  </ng-template>
+
+  <ng-template #notFoundTpl>
+    <div class="state">ไม่พบข้อมูลสถานที่นี้</div>
+  </ng-template>
+</div>

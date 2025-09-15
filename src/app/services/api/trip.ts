@@ -33,6 +33,12 @@ export class Trip {
     return data;
   }
 
+  public async EditTrip(id: any,body: any) {
+    const url = this.constants.API_ENDPOINT + 'trip/' + id;
+    const response = await lastValueFrom(this.http.put(url, body));
+    return response ;
+  }
+
   async Uploadfromfile(formData: any) {
     const url = this.constants.API_ENDPOINT + 'upload';
     var data = await lastValueFrom(this.http.post(url, formData));

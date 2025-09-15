@@ -1,0 +1,225 @@
+/* ---------- ตัวแปรโทนสีเบา ๆ ---------- */
+:host {
+  --bg: #f7f8fb;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --chip-bg: #f1f5f9;
+  --chip-text: #0f172a;
+  --primary: #3f51b5; /* Angular Material Indigo */
+  --ring: rgba(63, 81, 181, 0.2);
+}
+
+/* ---------- โครงหน้า ---------- */
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 24px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.page-title {
+  font-weight: 700;
+  font-size: 28px;
+  margin: 0 0 16px 0;
+  letter-spacing: .2px;
+  background: linear-gradient(90deg, var(--primary), #7c4dff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- แถวค้นหา ---------- */
+.filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  padding: 16px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #fff, #fbfbff);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.04),
+    0 6px 18px rgba(63,81,181,.08);
+  margin-bottom: 18px;
+  align-items: end;
+}
+
+.w-full, .filters .mat-form-field {
+  width: 100%;
+}
+
+.filters-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* ทำให้ฟิลด์โฟกัสแล้วเด่นนิด ๆ */
+::ng-deep .mat-mdc-form-field.mdc-text-field--focused .mdc-notched-outline__leading,
+::ng-deep .mat-mdc-form-field.mdc-text-field--focused .mdc-notched-outline__trailing,
+::ng-deep .mat-mdc-form-field.mdc-text-field--focused .mdc-notched-outline__notch {
+  border-color: var(--primary) !important;
+}
+
+/* ---------- ส่วนหัวผลลัพธ์ ---------- */
+.result-header {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 8px 4px 12px;
+}
+
+/* ---------- การ์ดรายการ ---------- */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 18px;
+  background: var(--card);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.05),
+    0 12px 24px rgba(15,23,42,.06);
+  transition: transform .18s ease, box-shadow .18s ease;
+  border: 1px solid rgba(2,6,23,.04);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 4px 8px rgba(0,0,0,.06),
+      0 18px 36px rgba(63,81,181,.12);
+  }
+}
+
+.card-left {
+  width: 100%;
+  height: 140px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #eef2ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .3s ease;
+  }
+
+  .no-img {
+    font-size: 12px;
+    color: var(--muted);
+  }
+}
+
+.card:hover .card-left img {
+  transform: scale(1.03);
+}
+
+.card-right {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.title {
+  margin: 2px 0 6px 0;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+/* ---------- เมทาดาต้าเป็นชิป ---------- */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--chip-bg);
+    color: var(--chip-text);
+    font-size: 12px;
+    border: 1px solid rgba(15,23,42,.06);
+    white-space: nowrap;
+  }
+
+  .price {
+    background: rgba(16,185,129,.1);
+    color: #065f46;
+    border-color: rgba(16,185,129,.2);
+  }
+}
+
+/* ---------- คำอธิบายตัดที่ 3 บรรทัด ---------- */
+.desc {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+/* ---------- ปุ่มแอ็กชัน ---------- */
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+
+  a[mat-stroked-button] {
+    border-radius: 999px !important;
+  }
+  button[mat-raised-button] {
+    border-radius: 999px !important;
+  }
+}
+
+/* ---------- สถานะว่างเปล่า ---------- */
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 40px 0 24px;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 960px) {
+  .filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .card {
+    grid-template-columns: 120px 1fr;
+  }
+  .card-left { height: 120px; }
+}
+
+@media (max-width: 600px) {
+  .filters {
+    grid-template-columns: 1fr;
+  }
+  .cards {
+    grid-template-columns: 1fr;
+  }
+  .card {
+    grid-template-columns: 1fr;
+  }
+  .card-left {
+    height: 180px;
+  }
+}

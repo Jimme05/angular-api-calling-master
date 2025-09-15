@@ -1,70 +1,121 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { lastValueFrom } from 'rxjs';
-import { GetTripRes } from '../../models/Get_Trip_Response';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { Router, RouterLink } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
+import { GetTripRes } from '../../models/Get_Trip_Response';
 import { Trip } from '../../services/api/trip';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-call-api',
+  standalone: true,
   imports: [
     CommonModule,
-    MatButtonModule,
     HttpClientModule,
+    RouterLink,
+    // Angular Material
+    MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
+    MatDialogModule,
+    MatSnackBarModule,
   ],
   templateUrl: './call-api.html',
   styleUrl: './call-api.scss',
 })
-export class CallApi {
-  constructor(private http: HttpClient, private Service: Trip) {}
-  trips: GetTripRes[] = [];
+export class CallApi implements OnInit {
+  constructor(
+    private Service: Trip,
+    private dialog: MatDialog,
+    private snack: MatSnackBar,
+    private router: Router
+  ) {}
 
-  async callApi() {
-    this.trips = await this.Service.getAllTrips();
-    console.log(this.trips);
-    console.log(this.trips[0].name);
-    console.log('Call Completed');
+  // ข้อมูลทั้งหมด
+  private allTrips = signal<GetTripRes[]>([]);
+
+  // ตัวกรอง
+  idKeyword = signal<string>('');
+  nameKeyword = signal<string>('');
+  countryKeyword = signal<string>('');
+
+  // รายชื่อประเทศ (จากข้อมูลจริง)
+  countries = signal<string[]>([]);
+
+  // รายการที่จะแสดงหลังกรอง
+  trips = computed(() => {
+    const idKw = this.idKeyword().trim().toLowerCase();
+    const nameKw = this.nameKeyword().trim().toLowerCase();
+    const country = this.countryKeyword();
+
+    return this.allTrips().filter(t => {
+      const byId = idKw ? String(t.idx).toLowerCase() === idKw : true;
+      const byName = nameKw ? (t.name ?? '').toLowerCase().includes(nameKw) : true;
+      const byCountry = country ? (t.country ?? '') === country : true;
+      return byId && byName && byCountry;
+    });
+  });
+
+  async ngOnInit() {
+    await this.loadAll();
   }
 
-  async findOne(input: HTMLInputElement) {
+  async loadAll() {
+    const data = await this.Service.getAllTrips();
+    this.allTrips.set(data ?? []);
+
+    // อัปเดตรายชื่อประเทศแบบ unique
+    const set = new Set<string>();
+    for (const t of this.allTrips()) if (t?.country) set.add(t.country);
+    this.countries.set([...set].sort((a, b) => a.localeCompare(b)));
+  }
+
+  // ค้นหาแบบยิงไปหลังบ้านด้วย ID เดี่ยว
+  async findOneById() {
+    const id = this.idKeyword().trim();
+    if (!id) return;
     try {
-      const data = await this.Service.getTripById(input.value);
-      this.trips = [];
-      if (data) {
-        this.trips.push(data);
-      }
-      console.log(this.trips);
-      console.log('Call Completed');
-    } catch (error) {
-      console.error('Error fetching data for findOne:', error);
-      this.trips = [];
+      const item = await this.Service.getTripById(id);
+      this.allTrips.set(item ? [item] : []);
+    } catch (e) {
+      console.error(e);
+      this.allTrips.set([]);
     }
   }
 
-  async findName(input: HTMLInputElement) {
-    console.log(input.value);
-    this.trips = await this.Service.getAllTrips();
-    this.trips = this.trips.filter((x) =>
-      x.name.toLowerCase().includes(input.value.toLowerCase())
-    );
-    console.log(this.trips);
-    if (this.trips.length > 0) {
-      console.log(this.trips[0].name);
-    }
-    console.log('Call Completed');
+  // ล้างตัวกรองแล้วรีเฟรช
+  async clearFilters() {
+    this.idKeyword.set('');
+    this.nameKeyword.set('');
+    this.countryKeyword.set('');
+    await this.loadAll();
   }
 
-  async deleteByid(id: any) {
+  // ลบ (ยืนยันก่อน)
+  async confirmAndDelete(idx: number) {
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      data: { message: `ต้องการลบสถานที่ (ID: ${idx}) ใช่หรือไม่?` },
+    });
+    const yes = await ref.afterClosed().toPromise();
+    if (!yes) return;
+
     try {
-      var data = await this.Service.DeleteTripByid(id);
-      console.log(' Delete Sessceed', data);
-    } catch (error) {
-      console.error('Error fetching data for deleteByid:', error);
+      await this.Service.DeleteTripByid(idx);
+      this.snack.open('ลบสำเร็จ', 'ปิด', { duration: 1500 });
+      this.allTrips.set(this.allTrips().filter(t => t.idx !== idx));
+    } catch (e) {
+      console.error(e);
+      this.snack.open('ลบไม่สำเร็จ', 'ปิด', { duration: 2000 });
     }
   }
+
+  trackById = (_: number, item: GetTripRes) => item.idx;
 }

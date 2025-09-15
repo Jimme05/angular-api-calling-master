@@ -1,22 +1,83 @@
-<button mat-raised-button color="primary" (click)="callApi()">Call API</button>
-<br>
-<br>
-<mat-form-field appearance="outline" style="padding-left: 20px">
-  <input matInput #keyword/>
-</mat-form-field>
-<button mat-raised-button color="primary" (click)="findOne(keyword)">FindOne</button>
-<br>
-<br>
-<mat-form-field appearance="outline" style="padding-left: 20px">
-  <input matInput #name/>
-</mat-form-field>
-<button mat-raised-button color="primary" (click)="findName(name)">FindName</button>
-<br>
-<br>
-<mat-form-field appearance="outline" style="padding-left: 20px">
-  <input matInput #id/>
-</mat-form-field>
-<button mat-raised-button color="primary" (click)="deleteByid(id.value)">Delete</button>
+<div class="page">
+  <h2 class="page-title">ค้นหาสถานที่ท่องเที่ยว</h2>
 
+  <div class="filters">
+    <!-- ค้นหา ID -->
+    <mat-form-field class="w-full" appearance="outline">
+      <mat-label>หมายเลขสถานที่ (ID)</mat-label>
+      <input
+        matInput
+        [value]="idKeyword()"
+        (input)="idKeyword.set($any($event.target).value)"
+        (keyup.enter)="findOneById()"
+        placeholder="เช่น 101"
+      />
+    </mat-form-field>
 
-<h2 *ngFor="let trip of this.trips">{{trip.name}}</h2>
+    <!-- ค้นหาชื่อ -->
+    <mat-form-field class="w-full" appearance="outline">
+      <mat-label>ชื่อสถานที่</mat-label>
+      <input
+        matInput
+        [value]="nameKeyword()"
+        (input)="nameKeyword.set($any($event.target).value)"
+        placeholder="เช่น Grand Canyon"
+      />
+    </mat-form-field>
+
+    <!-- ค้นหาประเทศ -->
+    <mat-form-field class="w-full" appearance="outline">
+      <mat-label>ประเทศ</mat-label>
+      <mat-select
+        [value]="countryKeyword()"
+        (selectionChange)="countryKeyword.set($event.value)"
+      >
+        <mat-option [value]="''">ทั้งหมด</mat-option>
+        <mat-option *ngFor="let c of countries()" [value]="c">{{ c }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- ปุ่ม -->
+    <div class="filters-actions">
+      <a mat-raised-button color="primary" routerLink="/trips/new">+ เพิ่มสถานที่</a>
+    </div>
+  </div>
+
+  <!-- สรุปจำนวน -->
+  <div class="result-header">พบ {{ trips().length }} รายการ</div>
+
+  <!-- รายการ -->
+  <div class="cards">
+    <div class="card" *ngFor="let t of trips(); trackBy: trackById">
+      
+      <div class="card-left">
+        <img *ngIf="t.coverimage" [src]="t.coverimage" [alt]="t.name" />
+        <div *ngIf="!t.coverimage" class="no-img">No Image</div>
+        
+      </div>
+      
+      <div class="card-right">
+        <h3 class="title">{{ t.name }}</h3>
+
+        <div class="meta">
+          <span class="chip"><b>ID:</b> {{ t.idx }}</span>
+          <span class="chip"><b>ประเทศ:</b> {{ t.country }}</span>
+          <span class="chip"><b>ทวีป/โซน:</b> {{ t.destination_zone }}</span>
+          <span class="chip"><b>ระยะเวลา:</b> {{ t.duration }} วัน</span>
+          <span class="chip price"><b>ราคา:</b> {{ t.price | number:'1.0-0' }} บาท</span>
+          <div class="actions">
+          <a mat-stroked-button color="primary" [routerLink]="['/trips', t.idx]">ดูรายละเอียด</a>
+          <a mat-stroked-button color="accent" [routerLink]="['/trips', t.idx, 'edit']">แก้ไข</a>
+          
+        </div>
+        </div>
+
+        <button mat-raised-button color="warn" (click)="confirmAndDelete(t.idx)">ลบ</button>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- ว่างเปล่า -->
+  <div *ngIf="trips().length === 0" class="empty">ไม่มีข้อมูลแสดง</div>
+</div>

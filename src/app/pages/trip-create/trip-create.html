@@ -1,0 +1,64 @@
+<div class="page">
+  <div class="topbar">
+    <a mat-button routerLink="/">← กลับหน้ารายการ</a>
+    <h2>เพิ่มสถานที่ใหม่</h2>
+  </div>
+
+  <mat-card class="card">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+      <div class="grid">
+        <mat-form-field appearance="outline">
+          <mat-label>ชื่อสถานที่</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>ประเทศ</mat-label>
+          <mat-select formControlName="country">
+            <mat-option *ngFor="let c of countries" [value]="c">{{ c }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+  <mat-label>ทวีป/โซน</mat-label>
+  <mat-select formControlName="destination_zone">
+    <mat-option *ngFor="let z of zones" [value]="z.id">{{ z.name }}</mat-option>
+  </mat-select>
+</mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>ราคา</mat-label>
+          <input type="number" matInput formControlName="price" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>ระยะเวลา (วัน)</mat-label>
+          <input type="number" matInput formControlName="duration" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-span-2">
+          <mat-label>ลิงก์รูปภาพ (coverimage)</mat-label>
+          <input matInput formControlName="coverimage" />
+        </mat-form-field>
+
+        <div class="uploader col-span-2">
+          <input type="file" accept="image/*" (change)="onUpload($any($event.target).files?.[0])" />
+        </div>
+
+        <div class="preview col-span-2" *ngIf="form.value.coverimage">
+          <img [src]="form.value.coverimage!" alt="preview" />
+        </div>
+
+        <mat-form-field appearance="outline" class="col-span-2">
+          <mat-label>รายละเอียด</mat-label>
+          <textarea rows="6" matInput formControlName="detail"></textarea>
+        </mat-form-field>
+      </div>
+
+      <div class="actions">
+        <button mat-raised-button color="primary" [disabled]="loading()">เพิ่มสถานที่</button>
+        <a mat-stroked-button routerLink="/">ยกเลิก</a>
+      </div>
+    </form>
+  </mat-card>
+</div>
