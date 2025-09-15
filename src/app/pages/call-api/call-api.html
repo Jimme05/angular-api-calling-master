@@ -1,0 +1,22 @@
+<button mat-raised-button color="primary" (click)="callApi()">Call API</button>
+<br>
+<br>
+<mat-form-field appearance="outline" style="padding-left: 20px">
+  <input matInput #keyword/>
+</mat-form-field>
+<button mat-raised-button color="primary" (click)="findOne(keyword)">FindOne</button>
+<br>
+<br>
+<mat-form-field appearance="outline" style="padding-left: 20px">
+  <input matInput #name/>
+</mat-form-field>
+<button mat-raised-button color="primary" (click)="findName(name)">FindName</button>
+<br>
+<br>
+<mat-form-field appearance="outline" style="padding-left: 20px">
+  <input matInput #id/>
+</mat-form-field>
+<button mat-raised-button color="primary" (click)="deleteByid(id.value)">Delete</button>
+
+
+<h2 *ngFor="let trip of this.trips">{{trip.name}}</h2>

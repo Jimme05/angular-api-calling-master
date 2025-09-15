@@ -1,0 +1,13 @@
+
+<p>upload works!</p>
+
+<input type="file" (change)="onFileSelected($event)" #fileUpload />
+<br />
+<button
+  mat-raised-button
+  color="primary"
+  (click)="upload()"
+  style="width: 200px"
+>
+  Upload
+</button>

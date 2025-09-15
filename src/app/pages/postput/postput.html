@@ -1,0 +1,47 @@
+<p>postput works!</p>
+<div
+  style="
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+  "
+>
+  <mat-form-field appearance="outline" style="width: 200px">
+    <mat-label>Name</mat-label>
+    <input matInput [(ngModel)]="name" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" style="width: 200px">
+    <mat-label>Destination</mat-label>
+    <mat-select [(ngModel)]="destination">
+      @for (distination of distinations; track distination) {
+      <mat-option [value]="distination.value">{{
+        distination.name
+      }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" style="width: 200px">
+    <mat-label>Country</mat-label>
+    <input matInput [(ngModel)]="country" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" style="width: 200px">
+    <mat-label>Cover Image</mat-label>
+    <input matInput [(ngModel)]="cover" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" style="width: 200px">
+    <mat-label>Detail</mat-label>
+    <input matInput [(ngModel)]="detail" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" style="width: 200px">
+    <mat-label>Price</mat-label>
+    <input matInput [(ngModel)]="price" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" style="width: 200px">
+    <mat-label>Duration</mat-label>
+    <input matInput [(ngModel)]="duration" />
+  </mat-form-field>
+  <button mat-raised-button color="primary" (click)="addNew()" style="width: 200px">
+    Add New
+  </button>
+</div>
